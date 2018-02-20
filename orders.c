@@ -54,22 +54,21 @@ int check_if_orders_empty()
 
 int check_floor_orders() 
 {
-	if (elev_get_floor_sensor_signal() != -1) 
-	{
-	int floor = elev_get_floor_sensor_signal();
-	}	
+	int floor = elev_get_floor_sensor_signal();	
 	int direction = io_read_bit(MOTORDIR);
 	if ((direction == 1) && ((orders[floor][0] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
+		return 1;
 	}
 	if ((dir == 0) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
+		return 1;
 	}
-
+	return 0;
 }
 
 void reset_orders() 

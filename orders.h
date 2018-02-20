@@ -10,10 +10,11 @@ void reset_floor_orders(int floor);
 // Tar inn etasje og fjerner bestillingene og slår av lysene på knappene
 
 int check_if_orders_empty();
-// Sjekker om det er noen bestillinger, returnerer 1 hvis listen er tom
+// Sjekker om det er noen bestillinger, returnerer 1 hvis listen er tom, 0 ellers
 
 int check_floor_orders();
-//Sjekker etasjen heisen er i om noen av bestillingene matcher med noen andre bestillinger
+//Sjekker etasjen heisen er i om noen av bestillingene matcher med noen andre
+// bestillinger, returnerer 1 hvis den matcher, 0 ellers
 
 void reset_orders();
 //Fjerner alle bestillinger
