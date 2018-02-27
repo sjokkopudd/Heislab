@@ -1,13 +1,15 @@
 #ifndef _HEISTILSTAND_H_
 #define _HEISTILSTAND_H_
 
-//en enum for å holde styr på hvilken tilstand heisen er i
 typedef enum state {BETWEEN_FLOORS, ON_FLOOR, STOPP, ERROR} state;
+//en enum for å holde styr på hvilken tilstand heisen er i
 
-//funksjonen som oversetter heissignal til en (enum) state
 state get_state ();
+//funksjonen som oversetter heissignal til en (enum) state
 
-//funksjonen (switchen) som forteller systemet hva som skal gjøres basert på state
 void state_machine ();
+//funksjonen (switchen) som forteller systemet hva som skal gjøres basert på state
 
+void initialize();
+//setter heisen i startposisjon 
 #endif
