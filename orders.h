@@ -23,3 +23,5 @@ void reset_all_orders();
 
 void next_order(int floor) ;
 //Finner hvilken retning den neste bestillingen er i, stopper hvis det ikke er noen 
+
+#endif

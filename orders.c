@@ -18,11 +18,9 @@ void check_order_buttons()
 	{
 		for(int button = 0; button < 3; button++)
 		{
-			if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3))){  
-				if(elev_get_button_signal(button, floor))
-				{
+			if (!((button == 1) && (floor == 0)) || !((button == 0) && (floor == 3)) && elev_get_button_signal(button, floor))
+			{  
 					set_order(floor, button);
-				}
 			}	
 		}
 	}
@@ -30,8 +28,9 @@ void check_order_buttons()
 
 void reset_floor_orders(int floor) 
 {
-	for(int button = 0; button < 3; button++) {
-		if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3))) 
+	for(int button = 0; button < 3; button++) 
+	{
+		if (!((button == 1 && (floor == 0) || !(button == 0 && floor == 3)))) 
 		{
 		orders[floor][button] = 0;
 		elev_set_button_lamp(button, floor, 0);
@@ -47,7 +46,7 @@ int check_if_orders_empty()
 	{
 		for(int button = 0; button < 3; button++) 
 		{
-			if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3)))
+			if (!((button == 1) && (floor == 0)) || !((button == 0) && (floor == 3)))
 			{
 				if (orders[floor][button] != 0) 
 				{
@@ -64,13 +63,13 @@ int check_floor_orders()
 {
 	int floor = elev_get_floor_sensor_signal();	
 	int direction = io_read_bit(MOTORDIR);
-	if ((direction == 1) && ((orders[floor][0] == 1) || (orders[floor][2] == 1))) {
+	if ((direction == 1) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
 		return 1;
 	}
-	if ((direction == 0) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
+	if ((direction == 0) && ((orders[floor][0] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
