@@ -18,8 +18,8 @@ int check_floor_orders();
 //Sjekker etasjen heisen er i om noen av bestillingene matcher med noen andre
 // bestillinger, returnerer 1 hvis den matcher, 0 ellers
 
-void reset_orders();
+void reset_all_orders();
 //Fjerner alle bestillinger
 
-void next_order() ;
+void next_order(int floor) ;
 //Finner hvilken retning den neste bestillingen er i, stopper hvis det ikke er noen 

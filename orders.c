@@ -10,7 +10,6 @@ void set_order(int floor, int button)
 {
 	orders[floor][button] = 1;
 	elev_set_button_lamp(button,floor, 1);
-	print_orders();
 }
 
 void check_order_buttons() 
@@ -19,8 +18,7 @@ void check_order_buttons()
 	{
 		for(int button = 0; button < 3; button++)
 		{
-			if (!(button == 0 && floor == 0) || !(button == 1 && floor == 3))// sørger for at vi ikke kaller ned etg 1 og opp etg 4.
-			{
+			if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3))){  
 				if(elev_get_button_signal(button, floor))
 				{
 					set_order(floor, button);
@@ -33,8 +31,11 @@ void check_order_buttons()
 void reset_floor_orders(int floor) 
 {
 	for(int button = 0; button < 3; button++) {
+		if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3))) 
+		{
 		orders[floor][button] = 0;
 		elev_set_button_lamp(button, floor, 0);
+		}
 	}
 }
 
@@ -46,9 +47,12 @@ int check_if_orders_empty()
 	{
 		for(int button = 0; button < 3; button++) 
 		{
-			if (button != 0) 
+			if (!((button == 0) && (floor == 0)) || !((button == 1) && (floor == 3)))
 			{
+				if (orders[floor][button] != 0) 
+				{
 				empty = 0;
+				}
 			}
 		}
 	}
@@ -56,28 +60,26 @@ int check_if_orders_empty()
 }
 
 
-int check_floor_orders(int floor) 
-{	
+int check_floor_orders() 
+{
+	int floor = elev_get_floor_sensor_signal();	
 	int direction = io_read_bit(MOTORDIR);
-	if ( direction && ((orders[floor][0]) || orders[floor][2])) //Hvis retning ned og (bestilling ned eller bestilling til denne etasjen)
-	{
+	if ((direction == 1) && ((orders[floor][0] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
 		return 1;
 	}
-	if ( !direction && (orders[floor][1] || orders[floor][2])) //Hvis retning opp og (bestilling opp eller bestilling til denne etasjen)
-	{
+	if ((direction == 0) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
 		return 1;
 	}
-	//printf("no orders \n");
 	return 0;
 }
 
-void reset_orders() 
+void reset_all_orders() 
 {
 	for(int floor = 0; floor < 4; floor++)
 	{
@@ -100,3 +102,42 @@ void print_orders()
 		printf("\n");
 	}
 }
+
+void next_order(int floor) 
+{	
+	int direction = io_read_bit(MOTORDIR);
+	if((direction == 0) && (floor != 3)) 
+	{
+		for (int next_floor = floor + 1; next_floor <= 3; next_floor++) 
+		{
+			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1)) 
+			{
+				io_clear_bit(MOTORDIR);
+				return;
+			}
+			
+	}
+		if(check_if_orders_empty() == 0) 
+		{
+				io_set_bit(MOTORDIR);
+				return;
+		}
+	else if((direction == 1) && (floor != 0 )) 
+	{
+		for (int next_floor = floor - 1; next_floor >= 0; next_floor--) 
+		{
+			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))  
+			{
+				io_set_bit(MOTORDIR);
+				return;
+			}
+			
+
+		}
+		if(check_if_orders_empty() == 0) 
+		{
+			io_clear_bit(MOTORDIR);
+			return;
+		}
+}
+
