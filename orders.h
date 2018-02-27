@@ -1,3 +1,5 @@
+#ifndef _HEISTILSTAND_H_
+#define _HEISTILSTAND_H_
 
 
 void set_order(int floor, int button);
