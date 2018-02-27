@@ -1,4 +1,5 @@
 #include "elev.h"
+#include "heistilstand.h"
 #include <stdio.h>
 
 
@@ -26,6 +27,8 @@ int main() {
             elev_set_motor_direction(DIRN_STOP);
             break;
         }
+
+        state_machine();
     }
 
     return 0;

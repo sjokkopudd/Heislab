@@ -1,15 +1,16 @@
-#include "order.h"
+#include "orders.h"
 #include "elev.h"
 #include "channels.h"
 #include "io.h"
-#include "main.c"
+#include <stdio.h>
 
 int orders[4][3] = {{0}};
 
 void set_order(int floor, int button) 
 {
 	orders[floor][button] = 1;
-	elev_set_buttonlamp(elev_button_type_t button,floor, 1);
+	elev_set_button_lamp(button,floor, 1);
+
 }
 
 void check_order_buttons() 
@@ -18,9 +19,9 @@ void check_order_buttons()
 	{
 		for(int button = 0; button < 3; button++)
 		{
-			if(elev_get_button_signal(elev_button_type_t button, floor))
+			if(elev_get_button_signal(button, floor))
 			{
-				set_order(floor, button, 1);
+				set_order(floor, button);
 			}
 		}
 	}
@@ -30,7 +31,7 @@ void reset_floor_orders(int floor)
 {
 	for(int button = 0; button < 3; button++) {
 		orders[floor][button] = 0;
-		elev_set_buttonlamp(elev_button_type_t button, floor, 0);
+		elev_set_button_lamp(button, floor, 0);
 	}
 }
 
@@ -62,7 +63,7 @@ int check_floor_orders()
 		reset_floor_orders(floor);
 		return 1;
 	}
-	if ((dir == 0) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
+	if ((direction == 0) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_door_open_lamp(1);
 		reset_floor_orders(floor);
@@ -80,4 +81,17 @@ void reset_orders()
 			orders[floor][button] = 0;
 		}
 	}		
+}
+
+void print_orders()
+{
+	int row, column;
+	for (row = 0; row < 4; row ++)
+	{
+		for (column = 0; column < 3; column ++)
+		{
+			printf("%d    ", orders[row][column]);
+		}
+		printf("\n");
+	}
 }
