@@ -111,14 +111,14 @@ void next_order(int floor)
 		{
 			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1)) 
 			{
-				io_clear_bit(MOTORDIR);
+				elev_set_motor_direction(DIRN_UP);;
 				return;
 			}
 			
 	}
 		if(check_if_orders_empty() == 0) 
 		{
-				io_set_bit(MOTORDIR);
+				elev_set_motor_direction(DIRN_DOWN);;
 				return;
 		}
 	else if((direction == 1) && (floor != 0 )) 
@@ -127,7 +127,7 @@ void next_order(int floor)
 		{
 			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))  
 			{
-				io_set_bit(MOTORDIR);
+				elev_set_motor_direction(DIRN_DOWN);
 				return;
 			}
 			
@@ -135,7 +135,7 @@ void next_order(int floor)
 		}
 		if(check_if_orders_empty() == 0) 
 		{
-			io_clear_bit(MOTORDIR);
+			elev_set_motor_direction(DIRN_UP);
 			return;
 		}
 }
