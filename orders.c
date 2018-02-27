@@ -4,13 +4,12 @@
 #include "io.h"
 #include <stdio.h>
 
-int orders[4][3] = {{0}};
+static int orders[4][3] = {{0}};
 
 void set_order(int floor, int button) 
 {
 	orders[floor][button] = 1;
 	elev_set_button_lamp(button,floor, 1);
-
 }
 
 void check_order_buttons() 
@@ -95,3 +94,43 @@ void print_orders()
 		printf("\n");
 	}
 }
+
+void next_order() 
+{
+	int floor = elev_get_floor_sensor_signal();	
+	int direction = io_read_bit(MOTORDIR);
+	if((direction == 0) && (floor != 3)) 
+	{
+		for (int next_floor = floor + 1; next_floor <= 3; next_floor++) 
+		{
+			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1)) 
+			{
+				io_clear_bit(MOTORDIR);
+				return;
+			}
+			
+	}
+		if(check_if_orders_empty() == 0) 
+		{
+				io_set_bit(MOTORDIR);
+				return;
+		}
+	else if((direction == 1) && (floor != 0 )) 
+	{
+		for (int next_floor = floor - 1; next_floor >= 0; next_floor--) 
+		{
+			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))  
+			{
+				io_set_bit(MOTORDIR);
+				return;
+			}
+			
+
+		}
+		if(check_if_orders_empty() == 0) 
+		{
+			io_clear_bit(MOTORDIR);
+			return;
+		}
+}
+

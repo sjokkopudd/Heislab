@@ -18,3 +18,6 @@ int check_floor_orders();
 
 void reset_orders();
 //Fjerner alle bestillinger
+
+void next_order() ;
+//Finner hvilken retning den neste bestillingen er i, stopper hvis det ikke er noen 
