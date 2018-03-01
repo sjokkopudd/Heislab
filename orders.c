@@ -1,3 +1,4 @@
+
 #include "orders.h"
 #include "elev.h"
 #include "channels.h"
@@ -103,6 +104,7 @@ void print_orders()
 	}
 }
 
+/*
 void next_order(int floor) 
 {	
 	int direction = io_read_bit(MOTORDIR);
@@ -140,4 +142,77 @@ void next_order(int floor)
 		}
 	}
 }
+*/
 
+void next_order(int floor) 
+{	
+	int direction = io_read_bit(MOTORDIR);
+	if(direction == 0) 
+	{
+		for (int next_floor = floor + 1; next_floor <= 3; next_floor++)
+		{
+			if ((orders[next_floor][0] == 1) || (orders[next_floor][2] == 1))
+			{
+				elev_set_motor_direction(DIRN_UP);
+				return; //Denne løkken sjekker om flere bestillinger opp eller inni over etasjen heisen er i med retning opp.
+			}
+		} 
+		for (int next_floor = 3; next_floor >= 0; next_floor--)
+		{
+			if ((orders[next_floor][1] == 1) || (orders[next_floor][2] == 1) )
+			{
+				if (next_floor > floor) 
+				{
+					elev_set_motor_direction(DIRN_UP);
+					return;
+				}
+				else 
+				{
+					elev_set_motor_direction(DIRN_DOWN);
+				return;
+				}
+			} //Sjekker om noen over skal ned hvis ingen skal opp.
+				
+		}
+		for (int next_floor = 0; next_floor <= floor; next_floor++)
+		{
+			if (orders[next_floor][0] == 1)
+				elev_set_motor_direction(DIRN_DOWN);
+				return; //Sjekker om noen under skal opp til slutt. 
+		} 
+	}
+	else
+	{
+		for (int next_floor = floor - 1; next_floor >= 0; next_floor--)
+		{
+			if ((orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))
+			{
+				elev_set_motor_direction(DIRN_DOWN);
+				return; //Denne løkken sjekker om flere bestillinger ned eller inni under etasjen heisen er i med retning ned.
+			}
+		} 
+		for (int next_floor = 0; next_floor >= 0; next_floor--)
+		{
+			if ((orders[next_floor][0] == 1) || (orders[next_floor][2] == 1) )
+			{
+				if (next_floor < floor) 
+				{
+					elev_set_motor_direction(DIRN_DOWN);
+					return;
+				}
+				else 
+				{
+					elev_set_motor_direction(DIRN_UP);
+					return;
+				}
+			}//Sjekker om noen under skal opp hvis ingen skal ned.
+				
+		}
+		for (int next_floor = 3; next_floor >= floor; next_floor++)
+		{
+			if (orders[next_floor][1] == 1)
+				elev_set_motor_direction(DIRN_UP);
+				return; //Sjekker om noen over skal ned til slutt.
+		}
+	}
+}
