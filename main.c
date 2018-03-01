@@ -1,23 +1,25 @@
 #include "elev.h"
 #include "heistilstand.h"
+#include "io.h"
+#include "channels.h"
 #include <stdio.h>
 
 
 int main() {
-    // Initialize hardware
-    if (!elev_init()) {
+    if (!elev_init()) //initialiserer hardware
+    {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }
 
     printf("Press STOP button to stop elevator and exit program.\n");
 
-    initialize();
+    start_position(); // setter heisen til startposisjon
 
-    while (1) {
-
-        // Stop elevator and exit program if the stop button is pressed
-        if (elev_get_stop_signal()) {
+    while (1) 
+    {
+        if (io_read_bit(OBSTRUCTION)) 
+        {
             elev_set_motor_direction(DIRN_STOP);
             break;
         }

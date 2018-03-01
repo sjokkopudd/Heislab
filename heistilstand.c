@@ -9,7 +9,7 @@
 
 static int current_floor;
 
-void initialize()
+void start_position()
 {
 	while(elev_get_floor_sensor_signal() == -1)
 	{
@@ -47,9 +47,41 @@ void state_machine ()
 	{
 		case (STOPP):
 		{
-			elev_set_motor_direction (DIRN_STOP); 
-			reset_all_orders();
-			printf("Stop\n");
+			elev_set_motor_direction (DIRN_STOP); //stopper heisen
+			reset_all_orders(); //sletter alle bestillinger
+			printf("Stopp\n");
+
+			if (current_floor >= 0) //åpner døra dersom heisen er i en etasje
+			{
+				elev_set_door_open_lamp(1);
+			}
+
+			if (!elev_get_stop_signal())
+			{
+				if (current_floor >= 0) //hvis heiskanppen slippes når heisen allerede er i en etasje, venter heisen med åpen dør i 3 sek, så går videre til neste case
+				{
+					int timer = time(NULL);
+					while (time(NULL) < (timer + 3))
+					{
+						printf("Waiting\n");
+						check_order_buttons();
+					}
+					elev_set_door_open_lamp(0);
+					break;
+				}
+
+				else
+				{
+					while(check_if_orders_empty())
+					{
+						check_order_buttons();
+						printf("Waiting for order \n");
+					}
+					elev_set_motor_direction(DIRN_DOWN);
+					break;
+				}
+
+			}
 			break;
 		}
 
@@ -64,19 +96,10 @@ void state_machine ()
 			elev_set_floor_indicator(current_floor); // Setter etasjeindikatorlyset
 			check_order_buttons();
 
-			if (current_floor == N_FLOORS - 1) // Bytter etasjeretning dersom heisen når etasje 1 eller 4
-			{
-            	elev_set_motor_direction(DIRN_DOWN);
-        	} 
-        	else if (current_floor == 0) 
-        	{
-            	elev_set_motor_direction(DIRN_UP);
-        	}
-
 			if (check_floor_orders(current_floor))// Denne sjekker om det er bestillinger i denne etasjen, og stopper i såfall heisen
 			{
 				reset_floor_orders(current_floor);
-				int timer = time(NULL);// venter i 3 sekunder, men sjekker knappene imens. Dersom stopp, får vi en break og state machine går til stop case.
+				int timer = time(NULL);// venter i 3 sekunder, men sjekker knappene imens. Dersom stopp, får vi en break og state machine går til stopp case.
 				while (time(NULL) < (timer + 3))
 				{
 					if (elev_get_stop_signal())
@@ -86,13 +109,19 @@ void state_machine ()
 
 					check_order_buttons();
 				}
-				printf("checked \n");
+				printf("door opened \n");
 				elev_set_door_open_lamp(0);// lukker døra
 			}
 
-			next_order(current_floor);
-			
-			//printf("on_floor\n");
+			if (check_if_orders_empty())
+			{
+				printf("empty \n");
+				elev_set_motor_direction(DIRN_STOP);
+				break;
+			}		
+
+			next_order(current_floor); //bestemmer hvilken bestilling som skal behandles neste
+			printf("Checked next order \n");	
 			break;
 		}
 

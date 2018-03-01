@@ -10,6 +10,6 @@ state get_state ();
 void state_machine ();
 //funksjonen (switchen) som forteller systemet hva som skal gjøres basert på state
 
-void initialize();
+void start_position();
 //setter heisen i startposisjon 
 #endif
