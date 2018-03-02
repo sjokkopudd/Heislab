@@ -1,5 +1,5 @@
 
-#include "state_machine.h"
+#include "heistilstand.h"
 #include "elev.h"
 #include "orders.h"
 #include "channels.h"
@@ -48,6 +48,7 @@ void state_machine ()
 		case (STOPP):
 		{
 			elev_set_motor_direction (DIRN_STOP); //stopper heisen
+			elev_set_stop_lamp(1);
 			reset_all_orders(); //sletter alle bestillinger
 			printf("Stopp\n");
 
@@ -58,6 +59,7 @@ void state_machine ()
 
 			if (!elev_get_stop_signal())
 			{
+				elev_set_stop_lamp(0);
 				if (current_floor >= 0) //hvis heiskanppen slippes når heisen allerede er i en etasje, venter heisen med åpen dør i 3 sek, så går videre til neste case
 				{
 					int timer = time(NULL);

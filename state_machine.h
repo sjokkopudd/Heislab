@@ -1,5 +1,5 @@
-#ifndef _STATE_MACHINE_H_
-#define _STATE_MACHINE_H_
+#ifndef _HEISTILSTAND_H_
+#define _HEISTILSTAND_H_
 
 typedef enum state {BETWEEN_FLOORS, ON_FLOOR, STOPP, ERROR} state;
 //en enum for å holde styr på hvilken tilstand heisen er i
