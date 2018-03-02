@@ -79,7 +79,7 @@ void state_machine ()
 						check_order_buttons();
 						printf("Waiting for order \n");
 					}
-					elev_set_motor_direction(DIRN_DOWN);
+					next_order(get_floor_lamp_signal());
 					break;
 				}
 

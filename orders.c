@@ -101,45 +101,6 @@ void print_orders()
 	}
 }
 
-/*
-void next_order(int floor) 
-{	
-	int direction = io_read_bit(MOTORDIR);
-	if((direction == 0) && (floor != 3)) 
-	{
-		for (int next_floor = floor + 1; next_floor <= 3; next_floor++) 
-		{
-			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1)) 
-			{
-				elev_set_motor_direction(DIRN_UP);;
-				return;
-			}
-
-			if(check_if_orders_empty() == 0) 
-			{
-				elev_set_motor_direction(DIRN_DOWN);;
-				return;
-			}
-		}
-	}
-	else if((direction == 1) && (floor != 0 )) 
-	{
-		for (int next_floor = floor - 1; next_floor >= 0; next_floor--) 
-		{
-			if((orders[next_floor][0] == 1) || (orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))  
-			{
-				elev_set_motor_direction(DIRN_DOWN);
-				return;
-			}
-			if(check_if_orders_empty() == 0) 
-			{
-				elev_set_motor_direction(DIRN_UP);
-				return;
-			}
-		}
-	}
-}
-*/
 
 void next_order(int floor) 
 {	
@@ -225,5 +186,25 @@ void next_order(int floor)
 
 		printf("NED, ingenting\n");
 		//elev_set_motor_direction(DIRN_STOP);
+	}
+}
+
+int get_floor_lamp_signal() 
+{
+	if (!(io_read_bit(LIGHT_FLOOR_IND1) && io_read_bit(LIGHT_FLOOR_IND2)))
+	{
+		return 0;
+	}
+	else if (!(io_read_bit(LIGHT_FLOOR_IND1) && io_read_bit(LIGHT_FLOOR_IND2)))
+	{
+		return 1;
+	}
+	else if (io_read_bit(LIGHT_FLOOR_IND1) && !io_read_bit(LIGHT_FLOOR_IND2))
+	{
+		return 2;
+	}
+	else 
+	{
+		return 3;
 	}
 }
