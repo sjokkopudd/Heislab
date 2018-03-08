@@ -27,7 +27,7 @@ void next_order(int floor) ;
 void print_orders();
 //printer ut bestillingsmatrisen for debugging
 
-int get_floor_lamp_signal();
+//int get_floor_lamp_signal();
 //leser av hvilken etasje heisen sist var i ved å se på etasjelyset
 
 void set_direction_after_stop( int last_floor);

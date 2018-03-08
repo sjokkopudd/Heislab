@@ -189,6 +189,7 @@ void next_order(int floor)
 	}
 }
 
+/*
 int get_floor_lamp_signal() 
 {
 	if (!(io_read_bit(LIGHT_FLOOR_IND1) && io_read_bit(LIGHT_FLOOR_IND2)))
@@ -199,7 +200,7 @@ int get_floor_lamp_signal()
 	{
 		return 1;
 	}
-	else if (io_read_bit(LIGHT_FLOOR_IND1) && !io_read_bit(LIGHT_FLOOR_IND2))
+	else if (io_read_bit(LIGHT_FLOOR_IND1) && !(io_read_bit(LIGHT_FLOOR_IND2)))
 	{
 		return 2;
 	}
@@ -208,3 +209,4 @@ int get_floor_lamp_signal()
 		return 3;
 	}
 }
+*/

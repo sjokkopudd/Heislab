@@ -9,6 +9,9 @@
 #include <math.h>
 
 static int current_floor;
+static int floor_lamp_value;
+//typedef enum between_floor_state {BETWEEN_1_2, BETWEEN_2_3, BETWEEN_3_4} between_floor_state; 
+//between_floor_state b_f_state;
 
 void start_position()
 {
@@ -51,7 +54,7 @@ void state_machine ()
 			elev_set_motor_direction (DIRN_STOP); //stopper heisen
 			elev_set_stop_lamp(1);
 			reset_all_orders(); //sletter alle bestillinger
-			printf("Stopp\n");
+			//printf("Stopp\n");
 
 			if (current_floor >= 0) //åpner døra dersom heisen er i en etasje
 			{
@@ -66,7 +69,7 @@ void state_machine ()
 					int timer = time(NULL);
 					while (time(NULL) < (timer + 3))
 					{
-						printf("Waiting\n");
+						//printf("Waiting\n");
 						check_order_buttons();
 					}
 					elev_set_door_open_lamp(0);
@@ -78,9 +81,20 @@ void state_machine ()
 					while(check_if_orders_empty())
 					{
 						check_order_buttons();
-						printf("Waiting for order \n");
+						//printf("Waiting for order \n");
 					}
-					next_order(get_floor_lamp_signal() + int pow(-1, io_read_bit(MOTORDIR)));
+
+					if (io_read_bit(MOTORDIR))
+					{
+						next_order(floor_lamp_value - 1);
+
+					}
+
+					else
+					{
+						next_order(floor_lamp_value + 1);
+					}
+
 					break;
 				}
 
@@ -91,12 +105,24 @@ void state_machine ()
 		case (BETWEEN_FLOORS):
 		{
 			check_order_buttons();
+
+			/*if (io_read_bit(MOTORDIR))
+			{
+				b_f_state = (get_floor_lamp_signal() - 1);
+			}
+			else 
+			{
+				b_f_state = get_floor_lamp_signal();
+			}
+
+			printf("%d\n", get_floor_lamp_signal() );*/
 			break;
 		}
 
 		case (ON_FLOOR):
 		{
 			elev_set_floor_indicator(current_floor); // Setter etasjeindikatorlyset
+			floor_lamp_value = current_floor;
 			check_order_buttons();
 
 			if (check_floor_orders(current_floor))// Denne sjekker om det er bestillinger i denne etasjen, og stopper i såfall heisen
@@ -118,7 +144,7 @@ void state_machine ()
 
 			if (check_if_orders_empty())
 			{
-				printf("empty \n");
+				//printf("empty \n");
 				elev_set_motor_direction(DIRN_STOP);
 				break;
 			}		
