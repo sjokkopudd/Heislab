@@ -111,7 +111,7 @@ void next_order(int floor)
 		{
 			if ((orders[next_floor][0] == 1) || (orders[next_floor][2] == 1))
 			{
-				io_clear_bit (MOTORDIR);
+				io_clear_bit (MOTORDIR); //Måtte kalle denne først, selv om den også blir kalt i linjen under
 				elev_set_motor_direction(DIRN_UP);
 				return; //Denne løkken sjekker om flere bestillinger opp eller inni over etasjen heisen er i med retning opp.
 			}

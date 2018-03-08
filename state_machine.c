@@ -6,6 +6,7 @@
 #include "io.h"
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 static int current_floor;
 
@@ -79,7 +80,7 @@ void state_machine ()
 						check_order_buttons();
 						printf("Waiting for order \n");
 					}
-					next_order(get_floor_lamp_signal());
+					next_order(get_floor_lamp_signal() + int pow(-1, io_read_bit(MOTORDIR)));
 					break;
 				}
 
