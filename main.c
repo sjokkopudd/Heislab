@@ -12,7 +12,7 @@ int main() {
         return 1;
     }
 
-    printf("Press STOP button to stop elevator and exit program.\n");
+    printf("Flick obstruction switch to stop elevator and exit program.\n");
 
     start_position(); // setter heisen til startposisjon
 

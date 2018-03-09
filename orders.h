@@ -24,11 +24,6 @@ void reset_all_orders();
 void next_order(int floor) ;
 //Finner hvilken retning den neste bestillingen er i, stopper hvis det ikke er noen 
 
-void print_orders();
-//printer ut bestillingsmatrisen for debugging
-
-//int get_floor_lamp_signal();
-//leser av hvilken etasje heisen sist var i ved å se på etasjelyset
-
 void set_direction_after_stop( int last_floor);
+//Finner hvilken retning heisen skal fortsette i etter stopp
 #endif

@@ -11,7 +11,6 @@ void set_order(int floor, int button)
 {
 	orders[floor][button] = 1;
 	elev_set_button_lamp(button,floor, 1);
-	print_orders();
 }
 
 void check_order_buttons() 
@@ -68,13 +67,9 @@ int check_floor_orders(int floor)
 {
 	int direction = io_read_bit(MOTORDIR);
 	if ((direction == 1) && ((orders[floor][1] == 1) || (orders[floor][2] == 1))) {
-		elev_set_motor_direction(DIRN_STOP);
-		elev_set_door_open_lamp(1);
 		return 1;
 	}
 	if ((direction == 0) && ((orders[floor][0] == 1) || (orders[floor][2] == 1))) {
-		elev_set_motor_direction(DIRN_STOP);
-		elev_set_door_open_lamp(1);
 		return 1;
 	}
 	return 0;
@@ -88,20 +83,6 @@ void reset_all_orders()
 	}		
 }
 
-void print_orders()
-{
-	int row, column;
-	for (row = 0; row < 4; row ++)
-	{
-		for (column = 0; column < 3; column ++)
-		{
-			printf("%d    ", orders[row][column]);
-		}
-		printf("\n");
-	}
-}
-
-
 void next_order(int floor) 
 {	
 	int direction = io_read_bit(MOTORDIR);
@@ -111,7 +92,6 @@ void next_order(int floor)
 		{
 			if ((orders[next_floor][0] == 1) || (orders[next_floor][2] == 1))
 			{
-				io_clear_bit (MOTORDIR); //Måtte kalle denne først, selv om den også blir kalt i linjen under
 				elev_set_motor_direction(DIRN_UP);
 				return; //Denne løkken sjekker om flere bestillinger opp eller inni over etasjen heisen er i med retning opp.
 			}
@@ -122,13 +102,11 @@ void next_order(int floor)
 			{
 				if (next_floor > floor) 
 				{
-					io_clear_bit (MOTORDIR);
 					elev_set_motor_direction(DIRN_UP);
 					return;
 				}
 				else 
 				{
-					io_set_bit (MOTORDIR);
 					elev_set_motor_direction(DIRN_DOWN);
 					return;
 				}
@@ -138,13 +116,9 @@ void next_order(int floor)
 		for (int next_floor = 0; next_floor < floor; next_floor++)
 		{
 			if (orders[next_floor][0] == 1)
-				io_set_bit (MOTORDIR);
 				elev_set_motor_direction(DIRN_DOWN);
 				return; //Sjekker om noen under skal opp til slutt. 
 		} 
-
-		printf("OPP, ingenting\n");
-		//elev_set_motor_direction(DIRN_STOP);
 	}
 	else
 	{
@@ -152,7 +126,6 @@ void next_order(int floor)
 		{
 			if ((orders[next_floor][1] == 1) || (orders[next_floor][2] == 1))
 			{
-				io_set_bit (MOTORDIR);
 				elev_set_motor_direction(DIRN_DOWN);
 				return; //Denne løkken sjekker om flere bestillinger ned eller inni under etasjen heisen er i med retning ned.
 			}
@@ -163,13 +136,11 @@ void next_order(int floor)
 			{
 				if (next_floor < floor) 
 				{
-					io_set_bit (MOTORDIR);
 					elev_set_motor_direction(DIRN_DOWN);
 					return;
 				}
 				else 
 				{
-					io_clear_bit (MOTORDIR);
 					elev_set_motor_direction(DIRN_UP);
 					return;
 				}
@@ -179,34 +150,47 @@ void next_order(int floor)
 		for (int next_floor = 3; next_floor > floor; next_floor--)
 		{
 			if (orders[next_floor][1] == 1)
-				io_clear_bit (MOTORDIR);
 				elev_set_motor_direction(DIRN_UP);
 				return; //Sjekker om noen over skal ned til slutt.
 		}
-
-		printf("NED, ingenting\n");
-		//elev_set_motor_direction(DIRN_STOP);
 	}
 }
 
-/*
-int get_floor_lamp_signal() 
+void set_direction_after_stop( int last_floor)
 {
-	if (!(io_read_bit(LIGHT_FLOOR_IND1) && io_read_bit(LIGHT_FLOOR_IND2)))
+	if (io_read_bit(MOTORDIR)) //for retning ned
 	{
-		return 0;
-	}
-	else if (!(io_read_bit(LIGHT_FLOOR_IND1) && io_read_bit(LIGHT_FLOOR_IND2)))
+		for (int next_floor = 0; next_floor < last_floor; next_floor++)
+		{
+			for (int button = 0; button < 3; button++)
+			{
+				if (orders[next_floor][button])
+				{
+					elev_set_motor_direction(DIRN_DOWN);
+					return;
+				}//itererer gjennom knappene for hver etasje under heisen, of dersom det er en bestilling settes retning ned
+			}
+		}
+
+		elev_set_motor_direction(DIRN_UP);
+		return;
+	}//ellers settes retning opp
+
+	else //for retning opp
 	{
-		return 1;
-	}
-	else if (io_read_bit(LIGHT_FLOOR_IND1) && !(io_read_bit(LIGHT_FLOOR_IND2)))
-	{
-		return 2;
-	}
-	else 
-	{
-		return 3;
-	}
+		for (int next_floor = 0; next_floor <= last_floor; next_floor++)
+			{
+				for (int button = 0; button < 3; button++)
+				{
+					if (orders[next_floor][button])
+					{
+						elev_set_motor_direction(DIRN_DOWN);
+						return;
+					}//itererer gjennom knappene for hver etasje under heisen, of dersom det er en bestilling settes retning ned
+				}
+			}
+
+		elev_set_motor_direction(DIRN_UP);
+		return;
+	}//ellers settes retning opp
 }
-*/
